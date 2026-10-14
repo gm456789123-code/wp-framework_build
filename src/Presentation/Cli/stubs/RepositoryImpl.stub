@@ -1,0 +1,26 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Infrastructure\Wordpress;
+
+use App\Domain\Model\{{Name}};
+use App\Domain\Repository\{{Name}}RepositoryInterface;
+use App\Domain\ValueObject\PostId;
+use Override;
+use PDO;
+
+final readonly class Wp{{Name}}Repository implements {{Name}}RepositoryInterface
+{
+    public function __construct(
+        private PDO $connection,
+    ) {
+    }
+
+    #[Override]
+    public function find(PostId $id): ?{{Name}}
+    {
+        // TODO: implement the query against $this->connection, following WpPageRepository as a reference.
+        return null;
+    }
+}

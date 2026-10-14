@@ -1,0 +1,54 @@
+{
+    "name": "sovereign/wp-framework",
+    "description": "Production Sovereign Engine - Headless WordPress with Hexagonal DDD",
+    "type": "project",
+    "license": "MIT",
+    "require": {
+        "php": ">=8.3",
+        "thecodingmachine/safe": "^2.5",
+        "symfony/console": "^7.1",
+        "symfony/process": "^7.1",
+        "latte/latte": "^3.0",
+        "robmorgan/phinx": "^0.16"
+    },
+    "require-dev": {
+        "phpstan/phpstan": "^2.2",
+        "vimeo/psalm": "^6.0",
+        "pestphp/pest": "^2.36",
+        "pestphp/pest-plugin-arch": "^2.7"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        },
+        "files": [
+            "tests/stubs/WordPressStubs.php"
+        ]
+    },
+    "config": {
+        "sort-packages": true,
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        },
+        "platform": {
+            "php": "8.3.0"
+        }
+    },
+    "scripts": {
+        "stan": "phpstan analyse",
+        "psalm": "psalm",
+        "test": "pest",
+        "check": [
+            "@stan",
+            "@psalm",
+            "@test"
+        ]
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}

@@ -1,0 +1,17 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Domain\Model;
+
+use App\Domain\ValueObject\PostId;
+use DateTimeImmutable;
+
+final readonly class {{Name}}
+{
+    public function __construct(
+        public PostId $id,
+        public DateTimeImmutable $createdAt,
+    ) {
+    }
+}

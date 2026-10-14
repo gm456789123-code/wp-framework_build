@@ -1,0 +1,13 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Application\UseCase\{{Name}};
+
+final readonly class {{Name}}Input
+{
+    public function __construct(
+        // TODO: define the fields this use case needs.
+    ) {
+    }
+}

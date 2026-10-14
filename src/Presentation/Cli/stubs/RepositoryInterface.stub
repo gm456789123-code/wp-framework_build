@@ -1,0 +1,13 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Domain\Repository;
+
+use App\Domain\Model\{{Name}};
+use App\Domain\ValueObject\PostId;
+
+interface {{Name}}RepositoryInterface
+{
+    public function find(PostId $id): ?{{Name}};
+}

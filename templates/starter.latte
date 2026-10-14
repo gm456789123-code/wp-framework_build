@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-[#09090b] text-zinc-200 antialiased selection:bg-zinc-800 selection:text-white">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{$siteName} — Sovereign Framework</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; }
+        code, pre, .font-mono { font-family: 'JetBrains Mono', monospace; }
+    </style>
+</head>
+<body class="min-h-full flex flex-col justify-between p-6 sm:p-10 relative bg-[#09090b] text-zinc-200 antialiased overflow-x-hidden">
+
+    <!-- Ambient Developer Background (Next.js / Vercel style) -->
+    <div class="fixed inset-0 pointer-events-none z-0">
+        <div class="absolute -top-32 left-1/2 -translate-x-1/2 w-[720px] h-[450px] bg-[radial-gradient(ellipse_at_center,rgba(56,189,248,0.07),transparent_70%)] blur-3xl"></div>
+        <div class="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:32px_32px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_40%,#000_40%,transparent_100%)]"></div>
+        <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_50%,rgba(9,9,11,0.5)_100%)]"></div>
+    </div>
+
+    <!-- Header Status -->
+    <header class="max-w-4xl w-full mx-auto flex items-center justify-between text-xs text-zinc-500 relative z-10">
+        <div class="flex items-center space-x-2">
+            <span class="w-2 h-2 rounded-full {if !empty($installSuccess)}bg-emerald-400 animate-pulse{else}bg-amber-500{/if} inline-block"></span>
+            <span class="font-mono text-zinc-400">sovereign-framework v0.1.0</span>
+        </div>
+        <div class="flex items-center space-x-2 text-[11px] font-mono text-zinc-500">
+            <span>{if !empty($installSuccess)}INSTALLED & ACTIVE{else}BARE FRAMEWORK MODE{/if}</span>
+        </div>
+    </header>
+
+    <main class="max-w-xl w-full mx-auto flex-1 flex flex-col items-center justify-center text-center my-10 relative z-10">
+
+        <!-- Logo with Ambient Halo -->
+        <div class="mb-6 relative">
+            <div class="absolute inset-0 bg-sky-500/15 blur-2xl rounded-full scale-125 -z-10"></div>
+            <img src="{$logoUrl}" alt="Sovereign" class="w-20 h-20 sm:w-24 sm:h-24 object-contain mx-auto drop-shadow-xl">
+        </div>
+
+        <h1 class="text-2xl sm:text-3xl font-semibold tracking-tight text-white mb-3">
+            Sovereign Engine
+        </h1>
+
+        <p class="text-sm text-zinc-400 leading-relaxed max-w-md mb-8">
+            A minimal headless framework for WordPress. Clean Hexagonal DDD architecture, zero frontend CSS bloat, and Latte 3.x templates.
+        </p>
+
+        {if !empty($installSuccess)}
+            <!-- INSTALL SUCCESS CARD -->
+            <div class="w-full max-w-md p-6 rounded-2xl bg-zinc-900/80 border border-emerald-500/40 shadow-2xl backdrop-blur-sm text-left space-y-4">
+                <div class="flex items-center space-x-3">
+                    <div class="w-8 h-8 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-sm">✓</div>
+                    <div>
+                        <h2 class="text-sm font-semibold text-white">WordPress Installed Successfully!</h2>
+                        <p class="text-xs text-zinc-400">Theme activated and database provisioned.</p>
+                    </div>
+                </div>
+
+                <div class="p-3.5 rounded-lg bg-zinc-950 border border-zinc-800 text-xs font-mono space-y-2">
+                    <div class="flex justify-between">
+                        <span class="text-zinc-500">Admin User:</span>
+                        <span class="text-white font-medium">{$adminUser}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-zinc-500">Admin Password:</span>
+                        <span class="text-emerald-400 font-medium select-all">{$adminPassword}</span>
+                    </div>
+                </div>
+
+                <div class="flex space-x-3 pt-2">
+                    <a href="{$adminUrl}" class="flex-1 py-2.5 px-4 rounded-lg bg-white text-zinc-950 font-medium text-xs text-center hover:bg-zinc-200 transition shadow-lg">
+                        Go to wp-admin &rarr;
+                    </a>
+                    <a href="{$siteUrl}" class="py-2.5 px-4 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-white font-medium text-xs text-center transition">
+                        View Site
+                    </a>
+                </div>
+            </div>
+
+        {elseif !empty($installError)}
+            <!-- INSTALL ERROR CARD -->
+            <div class="w-full max-w-md p-6 rounded-2xl bg-zinc-900/80 border border-rose-500/40 shadow-2xl backdrop-blur-sm text-left space-y-4">
+                <div class="flex items-center space-x-3">
+                    <div class="w-8 h-8 rounded-full bg-rose-500/20 text-rose-400 flex items-center justify-center font-bold text-sm">!</div>
+                    <div>
+                        <h2 class="text-sm font-semibold text-white">Installation Notice</h2>
+                        <p class="text-xs text-rose-400">{$installError}</p>
+                    </div>
+                </div>
+                <a href="?" class="block w-full py-2 px-4 rounded-lg bg-zinc-800 text-center text-xs text-white hover:bg-zinc-700 transition">Try Again</a>
+            </div>
+
+        {else}
+            <!-- 1-CLICK INSTALL BUTTON & ACTION -->
+            <div class="w-full max-w-md space-y-5">
+                <form method="POST" action="?action=install" id="installForm" onsubmit="handleInstall(event)">
+                    <button type="submit" id="installBtn" class="w-full py-3 px-6 rounded-xl bg-white hover:bg-zinc-200 text-zinc-950 font-semibold text-sm transition shadow-xl shadow-white/10 flex items-center justify-center space-x-2 group">
+                        <svg class="w-4 h-4 text-zinc-900 transition-transform group-hover:scale-110" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                        </svg>
+                        <span>Install WordPress & Sovereign Engine</span>
+                    </button>
+                </form>
+
+                <div id="loadingStatus" class="hidden text-xs text-zinc-400 font-mono animate-pulse">
+                    ⚡ Bootstrapping WordPress Core & Provisioning Database...
+                </div>
+
+                <!-- CLI Alternative -->
+                <div class="w-full text-left">
+                    <div class="rounded-lg bg-zinc-950 border border-zinc-800/80 overflow-hidden shadow-xl">
+                        <div class="px-3 py-1.5 bg-zinc-900/60 border-b border-zinc-800/80 text-[11px] font-mono text-zinc-500 flex justify-between items-center">
+                            <span>Or install via CLI</span>
+                            <span class="text-[10px] text-zinc-600">Terminal</span>
+                        </div>
+                        <div class="p-3 font-mono text-xs text-zinc-300 bg-black/40 select-all">
+                            php bin/console wp:install
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {/if}
+
+    </main>
+
+    <footer class="max-w-4xl w-full mx-auto flex flex-col sm:flex-row items-center justify-between text-xs text-zinc-500 font-mono gap-2 pt-6 border-t border-zinc-900 relative z-10">
+        <div>
+            <span>PHP {$phpVersion}</span>
+        </div>
+        <div>
+            <span>Hexagonal DDD Engine</span>
+        </div>
+    </footer>
+
+    <script>
+        function handleInstall(e) {
+            const btn = document.getElementById('installBtn');
+            const status = document.getElementById('loadingStatus');
+            if (btn && status) {
+                btn.disabled = true;
+                btn.classList.add('opacity-50', 'cursor-wait');
+                btn.innerHTML = '<span>Installing... Please wait</span>';
+                status.classList.remove('hidden');
+            }
+        }
+    </script>
+</body>
+</html>

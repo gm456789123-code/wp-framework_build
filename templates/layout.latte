@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="{$locale}" class="h-full bg-[#09090b] text-zinc-200 antialiased selection:bg-zinc-800 selection:text-white">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{$title} — {$siteName}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; }
+        code, pre, .font-mono { font-family: 'JetBrains Mono', monospace; }
+        .sov-content :first-child { margin-top: 0; }
+    </style>
+</head>
+<body class="min-h-full flex flex-col justify-between p-6 sm:p-10 relative bg-[#09090b] text-zinc-200 antialiased overflow-x-hidden">
+
+    <!-- Ambient Developer Background (Next.js / Vercel style) -->
+    <div class="fixed inset-0 pointer-events-none z-0">
+        <div class="absolute -top-32 left-1/2 -translate-x-1/2 w-[720px] h-[450px] bg-[radial-gradient(ellipse_at_center,rgba(56,189,248,0.07),transparent_70%)] blur-3xl"></div>
+        <div class="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:32px_32px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_40%,#000_40%,transparent_100%)]"></div>
+        <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_50%,rgba(9,9,11,0.5)_100%)]"></div>
+    </div>
+
+    <header class="max-w-4xl w-full mx-auto flex items-center justify-between text-xs text-zinc-400 relative z-10 pb-6 border-b border-zinc-900">
+        <div class="flex items-center space-x-3">
+            <img src="{$logoUrl}" alt="Logo" class="w-8 h-8 object-contain">
+            <span class="font-semibold text-white text-sm">{$siteName}</span>
+            <span class="px-2 py-0.5 rounded bg-emerald-950/60 border border-emerald-800/60 text-emerald-400 font-mono text-[10px]">Sovereign Engine</span>
+        </div>
+        <div class="flex items-center space-x-4">
+            <a href="{$adminUrl}" class="px-3 py-1.5 rounded-lg bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-300 hover:text-white transition flex items-center space-x-1.5">
+                <span>wp-admin</span>
+                <span>&rarr;</span>
+            </a>
+        </div>
+    </header>
+
+    <main class="max-w-4xl w-full mx-auto flex-1 my-10 relative z-10 space-y-6">
+        <article class="p-6 sm:p-8 rounded-2xl bg-zinc-900/30 border border-zinc-800/80 backdrop-blur-sm space-y-4">
+            <h1 class="text-2xl font-bold text-white tracking-tight">{$title}</h1>
+            <div class="sov-content text-sm text-zinc-300 leading-relaxed space-y-4">
+                {$content|noescape}
+            </div>
+        </article>
+    </main>
+
+    <footer class="max-w-4xl w-full mx-auto flex flex-col sm:flex-row items-center justify-between text-xs text-zinc-500 font-mono gap-2 pt-6 border-t border-zinc-900 relative z-10">
+        <div>
+            <span>PHP {$phpVersion}</span>
+            <span class="mx-2">•</span>
+            <span>Hexagonal DDD Engine</span>
+        </div>
+    </footer>
+
+</body>
+</html>
