@@ -15,6 +15,10 @@ final readonly class GetPage
 
     public function handle(GetPageInput $input): GetPageOutput
     {
-        return new GetPageOutput($this->pages->find($input->id));
+        $page = $input->forPreview
+            ? $this->pages->findForPreview($input->id)
+            : $this->pages->find($input->id);
+
+        return new GetPageOutput($page);
     }
 }

@@ -36,7 +36,7 @@ class DateTimeImmutable extends \DateTimeImmutable
         return $safeDatetime;
     }
 
-    //usefull if you need to switch back to regular DateTimeImmutable (for example when using DatePeriod)
+    //useful if you need to switch back to regular DateTimeImmutable (for example when using DatePeriod)
     public function getInnerDateTime(): \DateTimeImmutable
     {
         return $this->innerDateTime;
@@ -240,6 +240,9 @@ class DateTimeImmutable extends \DateTimeImmutable
         return self::createFromRegular($date);
     }
 
+    /**
+     * @return DateTimeImmutable
+     */
     public static function createFromInterface(\DateTimeInterface $object): self
     {
         if ($object instanceof \DateTime) {

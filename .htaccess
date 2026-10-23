@@ -1,12 +1,63 @@
+# Sovereign Engine -- root-level routing for Apache / LiteSpeed (shared hosting).
+#
+# On shared hosts the whole project sits inside public_html, so anything
+# that exists on disk is reachable unless it's denied here. Deny first,
+# serve real static files second, front controller last.
+
+Options -Indexes
+
+# Defence in depth if mod_rewrite is unavailable: never serve dotfiles
+# (.env, .git, .htaccess, .phpconf ...).
+<IfModule mod_authz_core.c>
+    <FilesMatch "^\.">
+        Require all denied
+    </FilesMatch>
+</IfModule>
+
 <IfModule mod_rewrite.c>
 RewriteEngine On
 RewriteBase /
 
-# Allow static files in public/ and assets/ to be served directly
-RewriteCond %{REQUEST_FILENAME} -f [OR]
-RewriteCond %{REQUEST_FILENAME} -d
+# 1. Dotfiles / dot-directories anywhere (allow ACME .well-known only).
+RewriteRule (^|/)\.(?!well-known(/|$)) - [F,L]
+
+# 2. Framework internals: source, deps, runtime data, tooling.
+RewriteRule ^(vendor|src|var|db|tests|docker|bin|scripts|templates|node_modules)(/|$) - [F,L]
+
+# 3. Theme PHP must only run through WordPress, never directly.
+RewriteRule ^themes/.*\.php$ - [F,L]
+
+# 3a. Permanently block the installer: once provisioned, a stray or
+# resurfaced install.php is the single highest-value target an attacker
+# could reach (a DB desync would let it reopen "create the first admin
+# account").
+RewriteRule ^wp-admin/install\.php$ - [F,L]
+
+# 3b. Never execute PHP placed under uploads -- the #1 WordPress RCE
+# escalation path is a plugin upload flaw dropping a .php "shell" there;
+# this closes the execution step even if some other flaw allows the write.
+# Matches double-extension bypasses too (shell.php.jpg, shell.phtml.png).
+RewriteRule ^wp-content/uploads/.*\.(php[0-9]?|phtml|pht|phar)(\.|$) - [NC,F,L]
+
+# 4. Sensitive file extensions and editor/backup artifacts, at ANY depth
+#    (not just the project root) -- debug.log and leftover .sql/.bak files
+#    are routinely left inside wp-content/, not only at the top level.
+#    Guarded by -f so virtual routes like /sitemap.xml still reach the
+#    front controller.
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteCond %{REQUEST_URI} !^/(robots|ads|app-ads|humans)\.txt$
+RewriteRule \.(md|lock|neon|phar|dist|yml|yaml|xml|json|sh|ini|log|sql|stub|bak|txt|html?|swp|swo)$ - [F,L]
+RewriteRule (~|\.orig)$ - [F,L]
+RewriteRule ^(phinx\.php|wp-config\.php|LICENSE)$ - [F,L]
+
+# 5. Real static files (public/assets, WordPress core assets, uploads).
+RewriteCond %{REQUEST_FILENAME} -f
 RewriteRule ^ - [L]
 
-# Route all other requests through front controller
-RewriteRule ^(.*)$ public/front.php [L,QSA]
+# 6. WordPress admin directory (index.php inside it).
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^wp-admin(/|$) - [L]
+
+# 7. Everything else is a public page view.
+RewriteRule ^ public/front.php [L,QSA]
 </IfModule>

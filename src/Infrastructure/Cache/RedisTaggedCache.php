@@ -22,6 +22,7 @@ final readonly class RedisTaggedCache implements CacheInterface
     #[Override]
     public function get(string $key): ?string
     {
+        /** @var string|false $value */
         $value = $this->redis->get($key);
 
         return is_string($value) ? $value : null;

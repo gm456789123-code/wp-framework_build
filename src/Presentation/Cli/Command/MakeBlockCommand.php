@@ -56,6 +56,13 @@ LATTE;
 
         file_put_contents($templateFile, $templateContent);
         $io->success(sprintf('Scaffolded block template: templates/blocks/%s.latte', $slug));
+        $io->note(sprintf(
+            'Already bound: any Gutenberg block whose name ends in "/%s" (e.g. acf/%s, theme/%s) '
+            . 'will render through this template automatically -- no other file needs editing.',
+            $slug,
+            $slug,
+            $slug,
+        ));
 
         return Command::SUCCESS;
     }

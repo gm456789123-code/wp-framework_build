@@ -1,3 +1,4 @@
+{var $lazyHtml = preg_replace('/<img(?![^>]*\bloading=)([^>]*)>/i', '<img loading="lazy" decoding="async"$1>', $innerHTML)}
 <figure class="my-6 max-w-full">
-    {$innerHTML|noescape}
+    {$lazyHtml|noescape}
 </figure>

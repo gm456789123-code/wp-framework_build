@@ -15,12 +15,25 @@ interface PageRepositoryInterface
 
     public function find(PostId $id): ?Page;
 
+    public function findBySlug(string $slug, ?Locale $locale = null): ?Page;
+
     /**
      * Most recently published, non-deleted page -- used for the site
      * homepage when no specific id is requested (mirrors WordPress's own
      * "show_on_front=posts" behaviour without needing WordPress loaded).
      */
-    public function findLatestPublishedId(): ?PostId;
+    public function findLatestPublishedId(?Locale $locale = null): ?PostId;
+
+    /**
+     * Resolves the front page ID: checks 'page_on_front' if 'show_on_front' = 'page',
+     * otherwise falls back to findLatestPublishedId().
+     */
+    public function findFrontPageId(?Locale $locale = null): ?PostId;
+
+    /**
+     * Retrieves a page including drafts/pending for authorized preview sessions.
+     */
+    public function findForPreview(PostId $id): ?Page;
 
     /**
      * @return bool true if a row was actually soft-deleted, false if the

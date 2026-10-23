@@ -1,55 +1,72 @@
-# Sovereign Engine (Pre-Built Distribution) 🚀
+# wp-framework — Sovereign Engine 🚀
 
-> **High-Performance Headless Framework for WordPress**  
-> Built with Domain-Driven Design (DDD), Strict Types 100%, and Latte 3.x Engine.
+> **A minimal headless framework for WordPress.**  
+> Clean Hexagonal DDD architecture, 100% Strict Types, zero frontend CSS bloat, and Latte 3.x templates.
 
-This repository contains the **standalone, pre-compiled distribution** of Sovereign Engine.  
-All composer dependencies (`vendor/`) and public entrypoints are included out-of-the-box. **Zero configuration or CLI needed!**
-
----
-
-## ⚡ Quick Start on Shared Hosting (Hostinger, cPanel, LiteSpeed, Apache)
-
-1. **Download or Clone:**
-   * Download this repository as a `.zip` file, or clone it directly:
-   ```bash
-   git clone https://github.com/gm456789123-code/wp-framework_build.git
-   ```
-2. **Upload to Host:**
-   * Upload all files into your domain's root folder (e.g. `public_html/`).
-3. **Configure Database:**
-   * Rename `.env.example` to `.env` and fill in your MySQL credentials:
-   ```ini
-   DB_HOST=localhost
-   DB_PORT=3306
-   DB_DATABASE=your_database_name
-   DB_USERNAME=your_database_user
-   DB_PASSWORD=your_database_password
-   APP_URL=https://your-domain.com
-   ```
-4. **1-Click Installation:**
-   * Open `https://your-domain.com` in your browser.
-   * Click **"⚡ Install WordPress & Sovereign Engine"**.
-   * You're done! Sovereign Engine will provision the database, activate the theme, and give you your admin credentials.
+WordPress is used strictly as a data store and admin dashboard (`wp-admin` + the Gutenberg editor); the public-facing site is rendered entirely by this codebase, never by a WordPress theme.
 
 ---
 
-## 🛠️ CLI Installation (Optional for Developers)
+## 📦 Repositories
 
-If you have SSH terminal access:
-```bash
-php bin/console wp:install
+* **Source Code (Core Dev, Pest Tests & Docker):**  
+  [https://github.com/gm456789123-code/my-frame.git](https://github.com/gm456789123-code/my-frame.git)
+* **Pre-Built Distribution (Shared Hosting & Production Ready with `vendor/`):**  
+  [https://github.com/gm456789123-code/wp-framework_build.git](https://github.com/gm456789123-code/wp-framework_build.git)
+
+---
+
+## 🏛️ Architecture (Hexagonal DDD)
+
+```
+src/
+├── Domain/           Pure business rules. Never imports wpdb/WP_*/WordPress functions.
+│   ├── Model/        Page, Article, BlockDto, etc.
+│   ├── ValueObject/  UuidV7, PostId, Email, Locale, PageStatus, etc.
+│   └── Event/        DomainEventDispatcherInterface, PageCreated, PageDeleted
+├── Application/      Use cases (Command/Query handlers, Input/Output DTOs).
+│   └── UseCase/      CreatePage, GetPage, DeletePage, GetLatestPublishedPageId
+├── Infrastructure/   Adapters — WordPress ($wpdb-equivalent via PDO), events, storage, cache.
+│   ├── Wordpress/    WpdbConnection, WpPageRepository, BlockAstParser (Gutenberg AST)
+│   ├── Security/     MerkleAuditLogger, FieldEncryptor, CsrfTokenManager, CspBridge
+│   ├── Cache/        RedisTaggedCache, CacheInterface
+│   └── Installer/    SmartBootstrapper (Headless core bootstrap & table provisioning)
+└── Presentation/     CLI commands, Latte views, HTTP controllers.
+    ├── Http/         PageController, DevToolbar, CsrfController, SecureFileController
+    ├── View/         BlockRenderer (Latte 3.x AST block templates)
+    └── Cli/          Command line console (bin/console)
 ```
 
----
-
-## 💎 Key Features
-* **Zero Boilerplate:** Includes pre-packaged `vendor/` autoloader.
-* **403-Forbidden Immunity:** Equipped with root `index.php` and `.htaccess` for LiteSpeed & Apache.
-* **Latte 3.x AST Block Renderer:** High-speed Gutenberg content rendering without WordPress frontend CSS bloat.
-* **Enterprise Security:** Merkle Tree Audit Logger, AES-256 Field Encryption, and ABAC Policy.
-* **Strict Type Safety:** Fully typed PHP 8.3/8.4/8.5 with `declare(strict_types=1);`.
+The Domain/Application purity rule is enforced automatically by `tests/Architecture/DomainPurityTest.php`.
 
 ---
 
-© 2026 Sovereign Engine. Released under the MIT License.
+## ⚡ Deployment Options
+
+### Option 1: Shared Hosting (Hostinger, cPanel, LiteSpeed, Apache)
+1. Download or clone the pre-built distribution:
+   ```bash
+   git clone https://github.com/gm456789123-code/wp-framework_build.git public_html
+   ```
+2. Set your MySQL credentials in `.env` (copied from `.env.example`).
+3. Open your domain in the browser and click **"⚡ Install WordPress & Sovereign Engine"**.
+4. The root `index.php` and `.htaccess` guarantee zero 403 Forbidden errors.
+
+### Option 2: Docker Development
+```bash
+docker compose up -d
+docker compose exec app composer check
+```
+The site is then available at `http://localhost:8080`.
+
+---
+
+## 🛡️ Quality & Verification
+* **PHPStan:** Level 9 — `0 Errors`
+* **Psalm:** Level 1 — `0 Errors, 99.88% type coverage`
+* **Pest:** `62 passed (173 assertions)`
+* **Strict Types:** `declare(strict_types=1);` in every PHP file.
+
+---
+
+© 2026 Sovereign Engine. MIT License.

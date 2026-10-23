@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en" class="h-full bg-[#09090b] text-zinc-200 antialiased selection:bg-zinc-800 selection:text-white">
+<html lang="th" class="h-full bg-[#09090b] text-zinc-200 antialiased selection:bg-zinc-800 selection:text-white">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{$siteName} — Sovereign Framework</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="{!empty($cssUrl) ? $cssUrl : '?asset=sovereign.css'}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -29,7 +29,7 @@
             <span class="font-mono text-zinc-400">sovereign-framework v0.1.0</span>
         </div>
         <div class="flex items-center space-x-2 text-[11px] font-mono text-zinc-500">
-            <span>{if !empty($installSuccess)}INSTALLED & ACTIVE{else}BARE FRAMEWORK MODE{/if}</span>
+            <span>{if !empty($installSuccess)}ติดตั้งแล้ว & ใช้งานได้{else}โหมดเฟรมเวิร์กเปล่า{/if}</span>
         </div>
     </header>
 
@@ -42,11 +42,11 @@
         </div>
 
         <h1 class="text-2xl sm:text-3xl font-semibold tracking-tight text-white mb-3">
-            Sovereign Engine
+            โซเวอเรนเอ็นจิ้น
         </h1>
 
         <p class="text-sm text-zinc-400 leading-relaxed max-w-md mb-8">
-            A minimal headless framework for WordPress. Clean Hexagonal DDD architecture, zero frontend CSS bloat, and Latte 3.x templates.
+            เฟรมเวิร์กแบบ Headless ที่เรียบง่ายสำหรับ WordPress สถาปัตยกรรม Hexagonal DDD ที่สะอาดตา ไม่มี CSS ส่วนเกินบนฝั่ง Frontend และใช้เทมเพลต Latte 3.x
         </p>
 
         {if !empty($installSuccess)}
@@ -55,8 +55,8 @@
                 <div class="flex items-center space-x-3">
                     <div class="w-8 h-8 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-sm">✓</div>
                     <div>
-                        <h2 class="text-sm font-semibold text-white">WordPress Installed Successfully!</h2>
-                        <p class="text-xs text-zinc-400">Theme activated and database provisioned.</p>
+                        <h2 class="text-sm font-semibold text-white">ติดตั้ง WordPress สำเร็จแล้ว!</h2>
+                        <p class="text-xs text-zinc-400">เปิดใช้งานธีมและเตรียมฐานข้อมูลเรียบร้อยแล้ว</p>
                     </div>
                 </div>
 
@@ -73,10 +73,10 @@
 
                 <div class="flex space-x-3 pt-2">
                     <a href="{$adminUrl}" class="flex-1 py-2.5 px-4 rounded-lg bg-white text-zinc-950 font-medium text-xs text-center hover:bg-zinc-200 transition shadow-lg">
-                        Go to wp-admin &rarr;
+                        ไปที่ wp-admin &rarr;
                     </a>
                     <a href="{$siteUrl}" class="py-2.5 px-4 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-white font-medium text-xs text-center transition">
-                        View Site
+                        ดูหน้าเว็บไซต์
                     </a>
                 </div>
             </div>
@@ -87,35 +87,78 @@
                 <div class="flex items-center space-x-3">
                     <div class="w-8 h-8 rounded-full bg-rose-500/20 text-rose-400 flex items-center justify-center font-bold text-sm">!</div>
                     <div>
-                        <h2 class="text-sm font-semibold text-white">Installation Notice</h2>
+                        <h2 class="text-sm font-semibold text-white">แจ้งเตือนการติดตั้ง</h2>
                         <p class="text-xs text-rose-400">{$installError}</p>
                     </div>
                 </div>
-                <a href="?" class="block w-full py-2 px-4 rounded-lg bg-zinc-800 text-center text-xs text-white hover:bg-zinc-700 transition">Try Again</a>
+                <a href="?" class="block w-full py-2 px-4 rounded-lg bg-zinc-800 text-center text-xs text-white hover:bg-zinc-700 transition">ลองใหม่อีกครั้ง</a>
             </div>
 
         {else}
             <!-- 1-CLICK INSTALL BUTTON & ACTION -->
             <div class="w-full max-w-md space-y-5">
-                <form method="POST" action="?action=install" id="installForm" onsubmit="handleInstall(event)">
+                <form method="POST" id="installForm" onsubmit="handleInstall(event)">
+                    <input type="hidden" name="action" value="install">
+                    <input type="hidden" name="install_csrf" value="{$installCsrfToken ?? ''}">
+
+                    {if !empty($needsDbCredentials)}
+                    <!-- Standard WordPress-style DB setup: same fields as
+                         wp-admin/setup-config.php, filled in directly in the
+                         browser -- no file to create or edit by hand. -->
+                    <div class="mb-4 space-y-3 text-left">
+                        <div>
+                            <label for="db_name" class="block text-xs text-zinc-400 mb-1.5 font-mono">ชื่อฐานข้อมูล (Database Name)</label>
+                            <input type="text" name="db_name" id="db_name" required value="{$dbName ?? ''}"
+                                   placeholder="wordpress"
+                                   class="w-full px-3 py-2 rounded-lg bg-zinc-950 border border-zinc-800 text-sm text-white placeholder-zinc-600 focus:border-zinc-600 focus:outline-none font-mono">
+                        </div>
+                        <div>
+                            <label for="db_user" class="block text-xs text-zinc-400 mb-1.5 font-mono">ชื่อผู้ใช้ฐานข้อมูล (Database Username)</label>
+                            <input type="text" name="db_user" id="db_user" required value="{$dbUser ?? ''}"
+                                   placeholder="root"
+                                   class="w-full px-3 py-2 rounded-lg bg-zinc-950 border border-zinc-800 text-sm text-white placeholder-zinc-600 focus:border-zinc-600 focus:outline-none font-mono">
+                        </div>
+                        <div>
+                            <label for="db_password" class="block text-xs text-zinc-400 mb-1.5 font-mono">รหัสผ่านฐานข้อมูล (Database Password)</label>
+                            <input type="password" name="db_password" id="db_password"
+                                   placeholder="(เว้นว่างได้ถ้าไม่มี)"
+                                   class="w-full px-3 py-2 rounded-lg bg-zinc-950 border border-zinc-800 text-sm text-white placeholder-zinc-600 focus:border-zinc-600 focus:outline-none font-mono">
+                        </div>
+                        <div>
+                            <label for="db_host" class="block text-xs text-zinc-400 mb-1.5 font-mono">โฮสต์ฐานข้อมูล (Database Host)</label>
+                            <input type="text" name="db_host" id="db_host" value="{$dbHost ?? 'localhost'}"
+                                   placeholder="localhost"
+                                   class="w-full px-3 py-2 rounded-lg bg-zinc-950 border border-zinc-800 text-sm text-white placeholder-zinc-600 focus:border-zinc-600 focus:outline-none font-mono">
+                            <p class="mt-1 text-[11px] text-zinc-500">สอบถามผู้ให้บริการโฮสติ้งของคุณได้หากไม่แน่ใจ -- ส่วนใหญ่ใช้ "localhost"</p>
+                        </div>
+                    </div>
+                    {/if}
+
+                    <div class="mb-4 text-left">
+                        <label for="admin_password" class="block text-xs text-zinc-400 mb-1.5 font-mono">รหัสผ่านผู้ดูแลระบบ (Admin Password)</label>
+                        <input type="password" name="admin_password" id="admin_password"
+                               placeholder="เว้นว่างไว้เพื่อสร้างรหัสผ่านอัตโนมัติ"
+                               class="w-full px-3 py-2 rounded-lg bg-zinc-950 border border-zinc-800 text-sm text-white placeholder-zinc-600 focus:border-zinc-600 focus:outline-none font-mono">
+                    </div>
+
                     <button type="submit" id="installBtn" class="w-full py-3 px-6 rounded-xl bg-white hover:bg-zinc-200 text-zinc-950 font-semibold text-sm transition shadow-xl shadow-white/10 flex items-center justify-center space-x-2 group">
                         <svg class="w-4 h-4 text-zinc-900 transition-transform group-hover:scale-110" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z" />
                         </svg>
-                        <span>Install WordPress & Sovereign Engine</span>
+                        <span>ติดตั้ง WordPress และ Sovereign Engine</span>
                     </button>
                 </form>
 
                 <div id="loadingStatus" class="hidden text-xs text-zinc-400 font-mono animate-pulse">
-                    ⚡ Bootstrapping WordPress Core & Provisioning Database...
+                    ⚡ กำลังติดตั้ง WordPress Core และเตรียมฐานข้อมูล...
                 </div>
 
                 <!-- CLI Alternative -->
                 <div class="w-full text-left">
                     <div class="rounded-lg bg-zinc-950 border border-zinc-800/80 overflow-hidden shadow-xl">
                         <div class="px-3 py-1.5 bg-zinc-900/60 border-b border-zinc-800/80 text-[11px] font-mono text-zinc-500 flex justify-between items-center">
-                            <span>Or install via CLI</span>
-                            <span class="text-[10px] text-zinc-600">Terminal</span>
+                            <span>หรือติดตั้งผ่านทาง CLI</span>
+                            <span class="text-[10px] text-zinc-600">เพลทฟอร์ม</span>
                         </div>
                         <div class="p-3 font-mono text-xs text-zinc-300 bg-black/40 select-all">
                             php bin/console wp:install
@@ -129,10 +172,10 @@
 
     <footer class="max-w-4xl w-full mx-auto flex flex-col sm:flex-row items-center justify-between text-xs text-zinc-500 font-mono gap-2 pt-6 border-t border-zinc-900 relative z-10">
         <div>
-            <span>PHP {$phpVersion}</span>
+            <span>PHP {=\PHP_VERSION}</span>
         </div>
         <div>
-            <span>Hexagonal DDD Engine</span>
+            <span>เซ็ตอัพ Hexagonal DDD</span>
         </div>
     </footer>
 
@@ -143,7 +186,7 @@
             if (btn && status) {
                 btn.disabled = true;
                 btn.classList.add('opacity-50', 'cursor-wait');
-                btn.innerHTML = '<span>Installing... Please wait</span>';
+                btn.innerHTML = '<span>กำลังติดตั้ง... โปรดรอสักครู่</span>';
                 status.classList.remove('hidden');
             }
         }

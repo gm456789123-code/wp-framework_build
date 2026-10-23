@@ -30,7 +30,12 @@ final class LazyAuditLogger implements AuditLoggerInterface
 
     private function inner(): AuditLoggerInterface
     {
-        $key = Env::string('APP_KEY', 'default-32-byte-secret-key-1234');
+        // No hardcoded fallback: a literal default here would be a known
+        // key readable in this public codebase, letting anyone recompute
+        // a valid-looking HMAC for a tampered audit entry. A real APP_KEY
+        // exists once the site is installed (wp-config.php); run this
+        // after install, not before.
+        $key = Env::appKey();
 
         return $this->inner ??= new MerkleAuditLogger(WpdbConnection::get(), $key);
     }

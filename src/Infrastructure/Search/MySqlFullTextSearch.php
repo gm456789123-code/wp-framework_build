@@ -28,10 +28,12 @@ final readonly class MySqlFullTextSearch implements SearchRepositoryInterface
             return [];
         }
 
-        $sql = 'SELECT ID, post_title, post_content, post_status, locale, post_date
+        $sql = "SELECT ID, post_title, post_content, post_status, locale, post_date
                 FROM wp_posts
                 WHERE MATCH(post_title, post_content) AGAINST(:term IN BOOLEAN MODE)
-                  AND deleted_at IS NULL';
+                  AND post_status = 'publish'
+                  AND post_type IN ('page','post')
+                  AND deleted_at IS NULL";
 
         $params = [
             'term' => $cleanTerm . '*',

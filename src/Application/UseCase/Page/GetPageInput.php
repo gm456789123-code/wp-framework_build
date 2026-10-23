@@ -10,6 +10,7 @@ final readonly class GetPageInput
 {
     public function __construct(
         public PostId $id,
+        public bool $forPreview = false,
     ) {
     }
 }

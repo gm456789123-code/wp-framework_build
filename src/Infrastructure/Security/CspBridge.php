@@ -30,7 +30,7 @@ final readonly class CspBridge
         ));
 
         return sprintf(
-            "default-src 'self'; script-src %s; connect-src 'self' https://www.google-analytics.com; report-uri /api/v1/telemetry/csp-reports;",
+            "default-src 'self'; script-src %s; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https:; connect-src 'self' https://www.google-analytics.com; frame-ancestors 'self'; base-uri 'self'; form-action 'self'; report-uri /api/v1/telemetry/csp-reports;",
             $scripts
         );
     }

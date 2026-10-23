@@ -203,20 +203,35 @@ final class SmartBootstrapper
             $salts .= "define('{$key}', '{$secret}');\n";
         }
 
+        // APP_KEY signs CSRF tokens, secure-file download URLs, and the
+        // audit log's HMAC chain -- generated fresh per install, same as
+        // the WordPress salts above, so no deployment ever relies on a
+        // hardcoded default that's sitting in public source code.
+        $appKey = bin2hex(random_bytes(32));
+
+        // var_export() yields a correctly escaped PHP string literal, so a
+        // quote or backslash in a credential can't terminate the string
+        // and inject code into wp-config.php.
+        $dbName = var_export($db['db'], true);
+        $dbUser = var_export($db['user'], true);
+        $dbPass = var_export($db['pass'], true);
+        $dbHost = var_export($db['host'], true);
+
         $config = <<<PHP
 <?php
 /**
  * Sovereign Engine - Autonomous WordPress Configuration
  */
 
-define('DB_NAME', '{$db['db']}');
-define('DB_USER', '{$db['user']}');
-define('DB_PASSWORD', '{$db['pass']}');
-define('DB_HOST', '{$db['host']}');
+define('DB_NAME', {$dbName});
+define('DB_USER', {$dbUser});
+define('DB_PASSWORD', {$dbPass});
+define('DB_HOST', {$dbHost});
 define('DB_CHARSET', 'utf8mb4');
 define('DB_COLLATE', '');
 
 {$salts}
+define('APP_KEY', '{$appKey}');
 
 \$table_prefix = 'wp_';
 

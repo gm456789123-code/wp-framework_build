@@ -37,15 +37,33 @@ final class LazyPageRepository implements PageRepositoryInterface
     }
 
     #[Override]
+    public function findBySlug(string $slug, ?Locale $locale = null): ?Page
+    {
+        return $this->inner()->findBySlug($slug, $locale);
+    }
+
+    #[Override]
     public function softDelete(PostId $id, PostId $deletedBy): bool
     {
         return $this->inner()->softDelete($id, $deletedBy);
     }
 
     #[Override]
-    public function findLatestPublishedId(): ?PostId
+    public function findLatestPublishedId(?Locale $locale = null): ?PostId
     {
-        return $this->inner()->findLatestPublishedId();
+        return $this->inner()->findLatestPublishedId($locale);
+    }
+
+    #[Override]
+    public function findFrontPageId(?Locale $locale = null): ?PostId
+    {
+        return $this->inner()->findFrontPageId($locale);
+    }
+
+    #[Override]
+    public function findForPreview(PostId $id): ?Page
+    {
+        return $this->inner()->findForPreview($id);
     }
 
     private function inner(): PageRepositoryInterface

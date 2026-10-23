@@ -59,7 +59,7 @@ $siteUrl = function_exists('home_url') ? home_url() : 'http://localhost:8080';
 $adminUrl = function_exists('admin_url') ? admin_url() : 'http://localhost:8080/wp-admin';
 $siteName = function_exists('get_bloginfo') ? (get_bloginfo('name') ?: 'Sovereign Engine') : 'Sovereign Engine';
 $themeUrl = function_exists('get_stylesheet_directory_uri') ? get_stylesheet_directory_uri() : '/wp-content/themes/sovereign';
-$logoUrl = $themeUrl . '/assets/logo.png';
+$logoUrl = $themeUrl . '/assets/logo.webp';
 $ttfb = round((microtime(true) - $startTime) * 1000, 2);
 ?>
 <!DOCTYPE html>
@@ -68,7 +68,7 @@ $ttfb = round((microtime(true) - $startTime) * 1000, 2);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= sov_esc_html($siteName) ?> — Sovereign Framework</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="<?= sov_esc_url($themeUrl . '/assets/sovereign.css') ?>">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
